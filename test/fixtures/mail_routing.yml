@@ -1,0 +1,9 @@
+root_global:
+  address_user: root
+  address_domain: '*'
+  recipient: root
+
+all_at_sample:
+  address_user: '*'
+  address_domain: sample.com
+  recipient: sample_default

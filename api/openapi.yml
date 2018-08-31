@@ -1,0 +1,579 @@
+openapi: 3.0.0
+
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/tknarr/email-management/1.0
+
+info:
+  version: "1.0"
+  title: Simple email system management API
+  contact:
+    email: tknarr@silverglass.org
+  license:
+    name: GPL 3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+
+tags:
+  - name: admin
+    description: Admin-only calls
+  - name: user
+    description: Operations available to any user
+
+security:
+  - basic: []
+
+paths:
+
+  /users:
+    get:
+      tags:
+        - admin
+      summary: list existing users
+      operationId: listUsers
+      description: Returns a listing of all the users in the system.
+      responses:
+        200:
+          description: User list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MailUser'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - admin
+      summary: add a new user
+      operationId: addUser
+      description: Adds a new user to the system.
+      responses:
+        201:
+          description: user created
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        409:
+          description: the user already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MailUser'
+        description: User to add.
+  /user:
+    get:
+      tags:
+        - user
+      summary: get information about the current user
+      operationId: getCurrentUser
+      description: Returns information about the current user only.
+      responses:
+        200:
+          description: user record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailUser'
+        404:
+          description: user does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/{user}:
+    parameters:
+      - name: user
+        in: path
+        description: User name to delete.
+        required: true
+        schema:
+          type: string
+          example: xyzzy
+    get:
+      tags:
+        - admin
+      summary: get information about a user
+      operationId: getUser
+      description: >
+        Returns information about a given user.
+      responses:
+        200:
+          description: user record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailUser'
+        403:
+          description: access not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: user does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - admin
+      summary: update information about a user
+      operationId: updateUser
+      description: Updates information about a user.
+      responses:
+        200:
+          description: 'success, updated user record'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailUser'
+        400:
+          description: 'input invalid, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - admin
+      summary: delete a user
+      operationId: deleteUser
+      description: Deletes a user from the system.
+      responses:
+        200:
+          description: success
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /routes:
+    get:
+      tags:
+        - admin
+      summary: list existing mail routing entries
+      operationId: listRoutes
+      description: Returns a listing of all the mail routing entries in the system.
+      responses:
+        '200':
+          description: Mail routing entry list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MailRouting'
+    post:
+      tags:
+        - admin
+      summary: add a new mail routing entry to the system
+      operationId: addRoute
+      description: Adds a new mail routing entry to the system.
+      responses:
+        201:
+          description: entry created
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        409:
+          description: the entry already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MailRouting'
+        description: Mail routing entry to add.
+  /route/{user}/{domain_name}:
+    parameters:
+      - name: user
+        in: path
+        description: Route entry user portion.
+        required: true
+        schema:
+          type: string
+          example: xyzzy
+      - name: domain_name
+        in: path
+        description: Route entry address portion.
+        required: true
+        schema:
+          type: string
+          example: abc.com
+    get:
+      tags:
+        - admin
+      summary: get information about a mail routing entry
+      operationId: getRoute
+      description: Returns information about a given mail routing entry.
+      responses:
+        200:
+          description: mail routing entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailRouting'
+        404:
+          description: entry does not exist
+    put:
+      tags:
+        - admin
+      summary: update the recipient of a routing entry
+      operationId: updateRoute
+      description: Updates the recipient of a mail routing entry.
+      responses:
+        200:
+          description: 'success, updated entry'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailRouting'
+        400:
+          description: 'input invalid, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: entry does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - admin
+      summary: delete a mail routing entry
+      operationId: deleteRoute
+      description: Deletes a mail routing entry from the system.
+      responses:
+        200:
+          description: success
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: entry does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /domains:
+    get:
+      tags:
+        - admin
+      summary: list hosted domains
+      operationId: listDomains
+      description: >
+        Returns a listing of all the domains hosted on this server.
+      responses:
+        200:
+          description: domain list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: abc.con
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - admin
+      summary: add a new hosted domain
+      operationId: addDomain
+      description: Adds a new hosted domain to the system.
+      responses:
+        201:
+          description: domain created
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: validation failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        409:
+          description: the domain already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HostedDomain'
+        description: Domain name to add
+  /domains/routing:
+    get:
+      tags:
+        - admin
+      summary: list hosted domains
+      operationId: listDomains
+      description: >
+        Returns a listing of all the domains hosted on this server.
+      responses:
+        200:
+          description: domain list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HostedDomain'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /domain/{domain}:
+    parameters:
+      - name: domain
+        in: path
+        description: Domain name to delete.
+        required: true
+        schema:
+          type: string
+          example: abc.com
+    put:
+      tags:
+        - admin
+      summary: update a hosted domain
+      operationId: updateDomain
+      description: Updates a hosted domain to have a new domain name.
+      responses:
+        200:
+          description: success
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - admin
+      summary: delete a hosted domain
+      operationId: deleteDomain
+      description: Deletes a hosted domain from the system.
+      responses:
+        200:
+          description: success
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /password:
+    post:
+      tags:
+        - user
+      summary: update your password
+      operationId: updatePassword
+      description: >
+        Update the password for the current user. Both the current and
+        new passwords must be supplied.
+      responses:
+        200:
+          description: success
+        400:
+          description: 'invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordEntry'
+
+components:
+  schemas:
+    MailUser:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+          example: xyzzy
+        password:
+          type: string
+          format: password
+          example: mypassword
+        change_attempts:
+          type: integer
+          format: int32
+          example: 0
+        auth_attempts:
+          type: integer
+          format: int32
+          example: 0
+        acct_type:
+          type: string
+          minLength: 1
+          maxLength: 1
+          example: S
+    MailRouting:
+      type: object
+      required:
+        - address_user
+        - address_domain
+      properties:
+        address_user:
+          type: string
+          minLength: 1
+          example: xyzzy
+        address_domain:
+          type: string
+          minLength: 1
+          example: abc.com
+        recipient:
+          type: string
+          minLength: 1
+          example: localuser
+    HostedDomain:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: abc.com
+        default_recipient:
+          type: string
+          minLength: 1
+          example: xyzzy
+    PasswordEntry:
+      type: object
+      required:
+        - current_password
+      properties:
+        username:
+          type: string
+          example: xyzzy
+        current_password:
+          type: string
+          minLength: 1
+          example: existingpassword
+        new_password:
+          type: string
+          example: newpassword
+      Error:
+        type: object
+        required:
+          - message
+        properties:
+          message:
+            type: string
+            example: This is an error
+          child:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic

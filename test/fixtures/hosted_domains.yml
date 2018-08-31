@@ -1,0 +1,5 @@
+sample_domain:
+  name: sample.com
+
+long_domain:
+  name: test.subdomain.mydomain.com

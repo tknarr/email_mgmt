@@ -1,0 +1,126 @@
+#-----
+# email_mgmt
+# Copyright (C) 2018 Silverglass Technical
+# Author: Todd Knarr <tknarr@silverglass.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-----
+
+# == Route Map
+#
+#          Prefix Verb   URI Pattern                                                  Controller#Action
+#    passwd_users GET    /email-management/1.0/users/passwd(.:format)                 user#passwd {:format=>:json}
+#           users GET    /email-management/1.0/users(.:format)                        user#index {:format=>:json}
+#                 POST   /email-management/1.0/users(.:format)                        user#create {:format=>:json}
+#            user PATCH  /email-management/1.0/user/:id(.:format)                     user#update {:format=>:json, :id=>/[[:alnum:]_.]+/}
+#                 PUT    /email-management/1.0/user/:id(.:format)                     user#update {:format=>:json, :id=>/[[:alnum:]_.]+/}
+#                 DELETE /email-management/1.0/user/:id(.:format)                     user#destroy {:format=>:json, :id=>/[[:alnum:]_.]+/}
+#    current_user GET    /email-management/1.0/user(.:format)                         user#current {:format=>:json}
+# update_password POST   /email-management/1.0/password(.:format)                     user#update_password {:format=>:json}
+
+class UserController < ApplicationController
+    skip_before_action :require_admin, only: [:current, :update_password]
+
+    def index
+        begin
+            user_list = MailUser.all
+            render status: :ok, json: user_list
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
+        end
+    end
+
+    def passwd
+        begin
+            user_list = VPasswd.all
+            render status: :ok, json: user_list
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
+        end
+    end
+
+    def create
+        begin
+            # TODO create virtual user home directory
+            MailUser.create!(username: params[:username], password: params[:password], acct_type: params[:acct_type])
+        rescue ActiveRecord::RecordInvalid => e
+            raise ApiErrors::ValidationFailure.new("Validation failure", e)
+        rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordNotUnique => e
+            raise ApiErrors::AlreadyExists.new("User #{params[:username]} already exists", e)
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
+        end
+        head :created
+    end
+
+    def update
+        begin
+            # TODO rename virtual user home directory
+            user = MailUser.find params[:id]
+            updated_attributes = {}
+            [:username, :password, :acct_type, :auth_attempts, :change_attempts].each do |key|
+                updated_attributes[key] = params[key] unless params[key].blank? || params[key] == user[key]
+            end
+            raise ApiErrors::NoChange.new if updated_attributes.empty?
+            user.update!(updated_attributes)
+            head :ok
+        rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
+            raise ApiErrors::CannotUpdate.new("Cannot update user #{params[:id]}", e)
+        end
+    end
+
+    def destroy
+        begin
+            # TODO delete virtual user home directory
+            user = MailUser.find params[:id]
+            user&.destroy!
+            head :ok
+        rescue ActiveRecord::StaleObjectError => e
+            raise ApiErrors::CannotDelete.new("User #{params[:id]} could not be deleted", e)
+        rescue ActiveRecord::RecordNotDestroyed => e
+            raise ApiErrors::CannotDelete.new("User #{params[:id]} could not be deleted", e)
+        rescue ActiveRecord::RecordNotFound => e
+            raise ApiErrors::CannotDelete.new("User #{params[:id]} could not be deleted", e)
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
+        end
+    end
+
+    def current
+        begin
+            user = MailUser.find current_username
+            render status: :ok, json: user
+        rescue ActiveRecord::RecordNotFound => e
+            raise ApiErrors::NotFound.new("User #{current_username} not found", e)
+        end
+    end
+
+    def update_password
+        begin
+            user = MailUser.find current_username
+            if user.authenticate params[:current_password]
+                user.password = params[:new_password]
+                user.save!
+                head :ok
+            else
+                raise ApiErrors::AuthenticationFailure.new("Invalid password for #{current_username}")
+            end
+        rescue ActiveRecord::RecordNotFound => e
+            raise ApiErrors::NotFound.new("User #{current_username} not found", e)
+        rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+            raise ApiErrors::ValidationFailure.new("Cannot update password for user #{current_username}", e)
+        end
+    end
+
+end

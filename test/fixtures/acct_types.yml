@@ -1,0 +1,25 @@
+root:
+  code: R
+  description: Root
+  abbreviation: Root
+  home_root: /
+
+system:
+  code: S
+  description: System user
+  abbreviation: Sys
+  home_root: /home/
+
+alias:
+  code: A
+  description: Alias
+  abbreviation: Alias
+  home_root: /alias/
+
+virtual:
+  code: V
+  description: Virtual user
+  home_root: /home/vmail/
+  uid: vmail
+  gid: vmail
+  transport: lmtp:unix:private/dovecot-lmtp

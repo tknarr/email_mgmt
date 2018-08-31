@@ -1,0 +1,8 @@
+testuser1: singletarget
+testuser2: firsttarget,secondtarget,thirdtarget
+testuser3:
+# Comment line
+
+    : bogustarget
+
+finaluser: finaltarget
