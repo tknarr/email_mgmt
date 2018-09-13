@@ -22,7 +22,6 @@ CREATE TABLE hosted_domains (
 CREATE TABLE mail_users (
     username        VARCHAR(50)  NOT NULL PRIMARY KEY,
     password_digest VARCHAR(200) NOT NULL,
-    auth_attempts   INT          DEFAULT 0,
     change_attempts INT          DEFAULT 0,
     acct_type       CHAR(1)      NOT NULL,
     admin           INT          DEFAULT 0,

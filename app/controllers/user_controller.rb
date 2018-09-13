@@ -53,7 +53,8 @@ class UserController < ApplicationController
     def create
         begin
             # TODO create virtual user home directory
-            MailUser.create!(username: params[:username], password: params[:password], acct_type: params[:acct_type])
+            user = MailUser.create!(username: params[:username], password: params[:password], acct_type: params[:acct_type])
+            render status: :created, json: user
         rescue ActiveRecord::RecordInvalid => e
             raise ApiErrors::ValidationFailure.new("Validation failure", e)
         rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordNotUnique => e
@@ -61,7 +62,6 @@ class UserController < ApplicationController
         rescue => e
             raise ApiErrors::ServerError.new(nil, e)
         end
-        head :created
     end
 
     def update
@@ -69,13 +69,14 @@ class UserController < ApplicationController
             # TODO rename virtual user home directory
             user = MailUser.find params[:id]
             updated_attributes = {}
-            [:username, :password, :acct_type, :auth_attempts, :change_attempts].each do |key|
+            [:username, :password, :acct_type, :change_attempts].each do |key|
                 updated_attributes[key] = params[key] unless params[key].blank? || params[key] == user[key]
             end
-            raise ApiErrors::NoChange.new if updated_attributes.empty?
-            user.update!(updated_attributes)
-            head :ok
-        rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
+            user.update!(updated_attributes) unless updated_attributes.empty?
+            render status :ok, json: user
+        rescue ActiveRecord::RecordNotFound => e
+            raise ApiErrors::NotFound.new("User #{params[:id]} does not exist", e)
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
             raise ApiErrors::CannotUpdate.new("Cannot update user #{params[:id]}", e)
         end
     end
@@ -109,11 +110,14 @@ class UserController < ApplicationController
     def update_password
         begin
             user = MailUser.find current_username
-            if user.authenticate params[:current_password]
+            if user.authenticate(params[:current_password]) && user.change_attempts < 5
                 user.password = params[:new_password]
+                user.change_attempts = 0
                 user.save!
                 head :ok
             else
+                user.change_attempts += 1
+                user.save!
                 raise ApiErrors::AuthenticationFailure.new("Invalid password for #{current_username}")
             end
         rescue ActiveRecord::RecordNotFound => e

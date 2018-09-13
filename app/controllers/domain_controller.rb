@@ -53,7 +53,8 @@ class DomainController < ApplicationController
 
     def create
         begin
-            HostedDomain.create!(name: params[:name])
+            domain =HostedDomain.create!(name: params[:name])
+            render status: :created, json: domain
         rescue ActiveRecord::RecordInvalid => e
             raise ApiErrors::ValidationFailure.new("Validation failure", e)
         rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordNotUnique => e
@@ -61,7 +62,6 @@ class DomainController < ApplicationController
         rescue => e
             raise ApiErrors::ServerError.new(nil, e)
         end
-        head :created
     end
 
     def update
@@ -69,9 +69,10 @@ class DomainController < ApplicationController
             domain = HostedDomain.find(params[:id])
             updated_attributes = {}
             updated_attributes[:name] = params[:name] unless params[:name].blank? || params[:name] == domain.name
-            raise ApiErrors::NoChange.new if updated_attributes.empty?
-            domain.update!(updated_attributes)
-            head :ok
+            domain.update!(updated_attributes) unless updated_attributes.empty?
+            render status: :ok, json: domain
+        rescue ActiveRecord::RecordNotFound => e
+            raise ApiErrors::NotFound.new("Domain #{params[:id]} does not exist", e)
         rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
             raise ApiErrors::CannotUpdate.new("Cannot update #{params[:id]} to #{params[:name]}", e)
         end

@@ -1,10 +1,3 @@
-# == Schema Information
-#
-# Table name: hosted_domains
-#
-#  name :string(50)       not null, primary key
-#
-
 #-----
 # email_mgmt
 # Copyright (C) 2018 Silverglass Technical
@@ -24,18 +17,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----
 
-class HostedDomain < ApplicationRecord
-    validates_presence_of :name
+# == Route Map
+#
+#             Prefix Verb   URI Pattern                                                  Controller#Action
+#    account_types GET    /email-management/1.0/account_types(.:format)                account_type#index {:format=>:json}
 
-    # Returns all domains as objects containing the domain name and the default
-    # recipient (or nil if none).
-    def self.all_routing
-        # TODO need less total method
-        find_by_sql(
-            'SELECT name, mail_routing.recipient AS default_recipient' \
-                ' FROM hosted_domains' \
-                ' LEFT JOIN mail_routing on name = mail_routing.address_domain AND mail_routing.address_user = \'*\''
-        )
+class AccountTypeController < ApplicationController
+    skip_before_action :require_admin
+
+    def index
+        begin
+            type_list = AcctType.all
+            render status: :ok, json: type_list
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
+        end
     end
 
 end

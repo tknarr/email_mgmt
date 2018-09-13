@@ -40,7 +40,8 @@ class RouteController < ApplicationController
 
   def create
       begin
-          MailRouting.create!(address_user: params[:address_user], address_domain: params[:address_domain], recipient: params[:recipient])
+          route = MailRouting.create!(address_user: params[:address_user], address_domain: params[:address_domain], recipient: params[:recipient])
+          render status: :created, json: route
       rescue ActiveRecord::RecordInvalid => e
           raise ApiErrors::ValidationFailure.new("Validation failure", e)
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordNotUnique => e
@@ -48,7 +49,6 @@ class RouteController < ApplicationController
       rescue => e
           raise ApiErrors::ServerError.new(nil, e)
       end
-      head :created
   end
 
   def update
@@ -58,9 +58,10 @@ class RouteController < ApplicationController
           [:address_user, :address_domain, :recipient].each do |key|
               updated_attributes[key] = params[key] unless params[key].blank? || params[key] == route[key]
           end
-          raise ApiErrors::NoChange.new if updated_attributes.empty?
-          route.update!(updated_attributes)
-          head :ok
+          route.update!(updated_attributes) unless updated_attributes.empty?
+          render status: :ok, json: route
+      rescue ActiveRecord::RecordNotFound => e
+          raise ApiErrors::NotFound.new("Route for #{params[:username]}@#{params[:domain_name]} does not exist", e)
       rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
           raise ApiErrors::CannotUpdate.new("Cannot update route for #{params[:username]}@#{params[:domain_name]}", e)
       end
