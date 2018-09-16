@@ -46,6 +46,8 @@ class RouteController < ApplicationController
           raise ApiErrors::ValidationFailure.new("Validation failure", e)
       rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordNotUnique => e
           raise ApiErrors::AlreadyExists.new("Route #{params[:username]}@#{params[:domain_name]} already exists", e)
+      rescue ApiErrors::BaseError => e
+          raise e
       rescue => e
           raise ApiErrors::ServerError.new(nil, e)
       end
@@ -64,6 +66,10 @@ class RouteController < ApplicationController
           raise ApiErrors::NotFound.new("Route for #{params[:username]}@#{params[:domain_name]} does not exist", e)
       rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
           raise ApiErrors::CannotUpdate.new("Cannot update route for #{params[:username]}@#{params[:domain_name]}", e)
+      rescue ApiErrors::BaseError => e
+          raise e
+      rescue => e
+          raise ApiErrors::ServerError.new(nil, e)
       end
   end
 
@@ -78,6 +84,8 @@ class RouteController < ApplicationController
           raise ApiErrors::CannotDelete.new("Route #{params[:username]}@#{params[:domain_name]} could not be deleted", e)
       rescue ActiveRecord::RecordNotFound => e
           raise ApiErrors::CannotDelete.new("Route #{params[:username]}@#{params[:domain_name]} could not be deleted", e)
+      rescue ApiErrors::BaseError => e
+          raise e
       rescue => e
           raise ApiErrors::ServerError.new(nil, e)
       end

@@ -53,12 +53,19 @@ class UserController < ApplicationController
     def create
         begin
             # TODO create virtual user home directory
-            user = MailUser.create!(username: params[:username], password: params[:password], acct_type: params[:acct_type])
+            # Force locked password digest for alias users
+            user = if params[:acct_type] == 'A'
+                       MailUser.create!(username: params[:username], password_digest: 'x', acct_type: params[:acct_type])
+                   else
+                       MailUser.create!(username: params[:username], password: params[:password], acct_type: params[:acct_type])
+                   end
             render status: :created, json: user
         rescue ActiveRecord::RecordInvalid => e
             raise ApiErrors::ValidationFailure.new("Validation failure", e)
         rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordNotUnique => e
             raise ApiErrors::AlreadyExists.new("User #{params[:username]} already exists", e)
+        rescue ApiErrors::BaseError => e
+            raise e
         rescue => e
             raise ApiErrors::ServerError.new(nil, e)
         end
@@ -66,26 +73,45 @@ class UserController < ApplicationController
 
     def update
         begin
-            # TODO rename virtual user home directory
             user = MailUser.find params[:id]
             updated_attributes = {}
-            [:username, :password, :acct_type, :change_attempts].each do |key|
+            [:username, :password, :acct_type, :change_attempts, :admin].each do |key|
                 updated_attributes[key] = params[key] unless params[key].blank? || params[key] == user[key]
             end
+            # Don't allow changing the username or admin flag of the current user
+            if is_current_user?(params[:id])
+                updated_attributes.delete(:username)
+                updated_attributes.delete(:admin)
+            end
+            # Don't allow password or account type changes for alias users
+            if user.acct_type == 'A'
+                updated_attributes.delete(:password)
+                updated_attributes.delete(:acct_type)
+                updated_attributes.delete(:admin)
+            end
             user.update!(updated_attributes) unless updated_attributes.empty?
-            render status :ok, json: user
+            # TODO rename virtual user home directory
+            render status: :ok, json: user
         rescue ActiveRecord::RecordNotFound => e
             raise ApiErrors::NotFound.new("User #{params[:id]} does not exist", e)
         rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
             raise ApiErrors::CannotUpdate.new("Cannot update user #{params[:id]}", e)
+        rescue ApiErrors::BaseError => e
+            raise e
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
         end
     end
 
     def destroy
         begin
-            # TODO delete virtual user home directory
             user = MailUser.find params[:id]
+            # Don't allow deleting the current user
+            if is_current_user?(params[:id])
+                raise ApiErrors::CannotDelete.new("Current user could not be deleted")
+            end
             user&.destroy!
+            # TODO delete virtual user home directory
             head :ok
         rescue ActiveRecord::StaleObjectError => e
             raise ApiErrors::CannotDelete.new("User #{params[:id]} could not be deleted", e)
@@ -93,6 +119,8 @@ class UserController < ApplicationController
             raise ApiErrors::CannotDelete.new("User #{params[:id]} could not be deleted", e)
         rescue ActiveRecord::RecordNotFound => e
             raise ApiErrors::CannotDelete.new("User #{params[:id]} could not be deleted", e)
+        rescue ApiErrors::BaseError => e
+            raise e
         rescue => e
             raise ApiErrors::ServerError.new(nil, e)
         end
@@ -104,6 +132,10 @@ class UserController < ApplicationController
             render status: :ok, json: user
         rescue ActiveRecord::RecordNotFound => e
             raise ApiErrors::NotFound.new("User #{current_username} not found", e)
+        rescue ApiErrors::BaseError => e
+            raise e
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
         end
     end
 
@@ -124,6 +156,10 @@ class UserController < ApplicationController
             raise ApiErrors::NotFound.new("User #{current_username} not found", e)
         rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
             raise ApiErrors::ValidationFailure.new("Cannot update password for user #{current_username}", e)
+        rescue ApiErrors::BaseError => e
+            raise e
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
         end
     end
 

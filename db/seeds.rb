@@ -7,6 +7,14 @@ AcctType.create!(code: 'A', description: 'Alias', abbreviation: 'Alias', home_ro
 AcctType.create!(code: 'V', description: 'Virtual user', abbreviation: '', home_root: '/home/vmail/',
                  uid: 'vmail', gid: 'vmail', transport: 'lmtp:unix:private/dovecot-lmtp')
 
+MailUser.create!(username: 'root', password: 'changeme', acct_type: 'R', admin: 1)
+MailUser.create(username: 'postmaster', password_digest: 'x', acct_type: 'A')
+MailUser.create(username: 'hostmaster', password_digest: 'x', acct_type: 'A')
+MailUser.create(username: 'webmaster', password_digest: 'x', acct_type: 'A')
+MailUser.create(username: 'abuse', password_digest: 'x', acct_type: 'A')
+MailUser.create(username: 'noc', password_digest: 'x', acct_type: 'A')
+MailUser.create(username: 'security', password_digest: 'x', acct_type: 'A')
+
 MailRouting.create!(address_user: 'root', address_domain: '*', recipient: 'root')
 MailRouting.create!(address_user: 'admin', address_domain: '*', recipient: 'root')
 MailRouting.create!(address_user: 'administrator', address_domain: '*', recipient: 'root')
@@ -16,5 +24,3 @@ MailRouting.create!(address_user: 'webmaster', address_domain: '*', recipient: '
 MailRouting.create!(address_user: 'abuse', address_domain: '*', recipient: 'abuse')
 MailRouting.create!(address_user: 'noc', address_domain: '*', recipient: 'noc')
 MailRouting.create!(address_user: 'security', address_domain: '*', recipient: 'security')
-
-MailUser.create!(username: 'root', password: 'changeme', acct_type: 'R', admin: 1)

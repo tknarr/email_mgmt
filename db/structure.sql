@@ -32,7 +32,10 @@ CREATE TABLE mail_routing (
     address_user   VARCHAR(50) NOT NULL,
     address_domain VARCHAR(50) NOT NULL,
     recipient      VARCHAR(50) NOT NULL,
-    PRIMARY KEY (address_user, address_domain)
+    PRIMARY KEY (address_user, address_domain),
+    FOREIGN KEY (recipient) REFERENCES mail_users (username)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );
 
 CREATE SQL SECURITY INVOKER VIEW v_passwd AS
