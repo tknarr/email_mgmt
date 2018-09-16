@@ -99,15 +99,15 @@ class RouteControllerTest < ActionDispatch::IntegrationTest
 
     test 'no updated attributes' do
         put route_url(username: '*', domain_name: 'sample.com'), params: {}, headers: @admin_headers, as: :json
-        assert_response :no_content
+        assert_response :success
         put route_url(username: '*', domain_name: 'sample.com'), params: { domain_name: 'sample.com' }, headers: @admin_headers, as: :json
-        assert_response :no_content
+        assert_response :success
     end
 
     test 'update cannot update does not exist' do
         put route_url(username: 'xyzzy', domain_name: 'sample.net'), params: { address_user: 'xyzzy', address_domain: 'sample.com', recipient: 'root' },
             headers: @admin_headers, as: :json
-        assert_response :conflict
+        assert_response :not_found
     end
 
     test 'update cannot update target exists' do

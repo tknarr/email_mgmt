@@ -108,14 +108,14 @@ class DomainControllerTest < ActionDispatch::IntegrationTest
 
     test 'no updated attributes' do
         put domain_url('sample.com'), params: {}, headers: @admin_headers, as: :json
-        assert_response :no_content
+        assert_response :success
         put domain_url('sample.com'), params: { name: 'sample.com' }, headers: @admin_headers, as: :json
-        assert_response :no_content
+        assert_response :success
     end
 
     test 'update cannot update does not exist' do
         put domain_url('sample.net'), params: { name: 'sample2.net' }, headers: @admin_headers, as: :json
-        assert_response :conflict
+        assert_response :not_found
     end
 
     test 'update cannot update target exists' do

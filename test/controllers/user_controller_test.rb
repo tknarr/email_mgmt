@@ -35,6 +35,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
 
     def setup
         @admin_headers = { "Authorization" => ActionController::HttpAuthentication::Basic.encode_credentials('root', 'changeme') }
+        @user_username = 'user1'
         @user_headers = { "Authorization" => ActionController::HttpAuthentication::Basic.encode_credentials('user1', 'changeme') }
         @newpwd_headers = { "Authorization" => ActionController::HttpAuthentication::Basic.encode_credentials('user1', 'dumbpassword') }
     end
@@ -112,14 +113,14 @@ class UserControllerTest < ActionDispatch::IntegrationTest
 
     test 'no updated attributes' do
         put user_url('sample_default'), params: {}, headers: @admin_headers, as: :json
-        assert_response :no_content
+        assert_response :success
         put user_url('sample_default'), params: { name: 'sample_default' }, headers: @admin_headers, as: :json
-        assert_response :no_content
+        assert_response :success
     end
 
     test 'update cannot update does not exist' do
         put user_url('xyzzy'), params: { username: 'abc', password: '*', acct_type: 'S' }, headers: @admin_headers, as: :json
-        assert_response :conflict
+        assert_response :not_found
     end
 
     test 'update cannot update target exists' do
@@ -161,14 +162,12 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     end
 
     test 'update password' do
-        get current_user_url, headers: @user_headers
-        user = JSON.parse(@response.body)
-        old_digest = user['password_digest']
+        user = MailUser.find(@user_username)
+        old_digest = user.password_digest
         post update_password_url, params: {current_password: 'changeme', new_password: 'dumbpassword'}, headers: @user_headers, as: :json
         assert_response :success
-        get current_user_url, headers: @newpwd_headers
-        user = JSON.parse(@response.body)
-        new_digest = user['password_digest']
+        user = MailUser.find(@user_username)
+        new_digest = user.password_digest
         assert_not_equal old_digest, new_digest
     end
 
