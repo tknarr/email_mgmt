@@ -1,16 +1,3 @@
-# == Schema Information
-#
-# Table name: v_passwd
-#
-#  username  :string(50)       not null
-#  password  :string(200)      not null
-#  acct_type :string(1)        not null
-#  uid       :string(50)       default(""), not null
-#  gid       :string(50)       default(""), not null
-#  home      :string(100)
-#  transport :string(100)
-#
-
 #-----
 # email_mgmt
 # Copyright (C) 2018 Silverglass Technical
@@ -30,12 +17,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-----
 
-class VPasswd < ApplicationRecord
-    self.table_name = 'v_passwd'
-    validates_presence_of :username, :password, :acct_type
+# == Route Map
+#
+#             Prefix Verb   URI Pattern                                                  Controller#Action
+#    account_types GET    /email-management/1.0/account_types(.:format)                account_type#index {:format=>:json}
 
-    def as_json(options = nil)
-        super((options || {}).merge(except: %i[password password_digest]))
+class AccountTypeController < ApplicationController
+    skip_before_action :require_admin
+
+    def index
+        begin
+            type_list = AcctType.all
+            render status: :ok, json: type_list
+        rescue => e
+            raise ApiErrors::ServerError.new(nil, e)
+        end
     end
 
 end

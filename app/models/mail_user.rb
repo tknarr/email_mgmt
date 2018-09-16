@@ -4,7 +4,6 @@
 #
 #  username        :string(50)       not null, primary key
 #  password_digest :string(200)      not null
-#  auth_attempts   :integer          default(0)
 #  change_attempts :integer          default(0)
 #  acct_type       :string(1)        not null
 #  admin           :integer          default(0)
@@ -40,5 +39,9 @@
 class MailUser < ApplicationRecord
     has_secure_password
     validates_presence_of :username, :password_digest, :acct_type
+
+    def as_json(options = nil)
+        super((options || {}).merge(except: %i[password password_digest]))
+    end
 
 end

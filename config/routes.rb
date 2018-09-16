@@ -20,6 +20,7 @@
 #           domain PATCH  /email-management/1.0/domain/:id(.:format)                   domain#update {:format=>:json, :id=>/[[:graph:]]+/}
 #                  PUT    /email-management/1.0/domain/:id(.:format)                   domain#update {:format=>:json, :id=>/[[:graph:]]+/}
 #                  DELETE /email-management/1.0/domain/:id(.:format)                   domain#destroy {:format=>:json, :id=>/[[:graph:]]+/}
+#    account_types GET    /email-management/1.0/account_types(.:format)                account_type#index {:format=>:json}
 #    relay_domains GET    /email-management/1.0/relay_map/domains(.:format)            relay_map#domains
 # relay_recipients GET    /email-management/1.0/relay_map/recipients(.:format)         relay_map#recipients
 
@@ -53,6 +54,9 @@ Rails.application.routes.draw do
                 end
             end
             resources :domain, only: [:update, :destroy], controller: 'domain', constraints: {id: /[[:graph:]]+/}
+
+            # Account types
+            get 'account_types', action: :index, controller: 'account_type'
 
         end
 

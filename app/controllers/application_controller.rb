@@ -57,6 +57,8 @@ class ApplicationController < ActionController::API
                 user = nil
             end
             result = user&.authenticate(password)
+            # Don't allow alias users to log in
+            result = false if user.acct_type == 'A'
             if result
                 @current_username = user.username
                 @admin = user.admin != 0
