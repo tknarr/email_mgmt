@@ -77,7 +77,7 @@ class DomainController < ApplicationController
             render status: :ok, json: domain
         rescue ActiveRecord::RecordNotFound => e
             raise ApiErrors::NotFound.new("Domain #{params[:id]} does not exist", e)
-        rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
             raise ApiErrors::CannotUpdate.new("Cannot update #{params[:id]} to #{params[:name]}", e)
         rescue ApiErrors::BaseError => e
             raise e

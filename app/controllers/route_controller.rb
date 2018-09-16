@@ -22,8 +22,7 @@
 #          Prefix Verb   URI Pattern                                                  Controller#Action
 #          routes GET    /email-management/1.0/routes(.:format)                       route#index {:format=>:json}
 #                 POST   /email-management/1.0/routes(.:format)                       route#create {:format=>:json}
-#           route GET    /email-management/1.0/route/:username/:domain_name(.:format) route#show {:format=>:json, :username=>/([[:alnum:]_.]+|\*)/, :domain_name=>/[[:graph:]]+/}
-#                 PATCH  /email-management/1.0/route/:username/:domain_name(.:format) route#update {:format=>:json, :username=>/([[:alnum:]_.]+|\*)/, :domain_name=>/[[:graph:]]+/}
+#           route PATCH  /email-management/1.0/route/:username/:domain_name(.:format) route#update {:format=>:json, :username=>/([[:alnum:]_.]+|\*)/, :domain_name=>/[[:graph:]]+/}
 #                 PUT    /email-management/1.0/route/:username/:domain_name(.:format) route#update {:format=>:json, :username=>/([[:alnum:]_.]+|\*)/, :domain_name=>/[[:graph:]]+/}
 #                 DELETE /email-management/1.0/route/:username/:domain_name(.:format) route#destroy {:format=>:json, :username=>/([[:alnum:]_.]+|\*)/, :domain_name=>/[[:graph:]]+/}
 
@@ -64,7 +63,7 @@ class RouteController < ApplicationController
           render status: :ok, json: route
       rescue ActiveRecord::RecordNotFound => e
           raise ApiErrors::NotFound.new("Route for #{params[:username]}@#{params[:domain_name]} does not exist", e)
-      rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
+      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordNotSaved => e
           raise ApiErrors::CannotUpdate.new("Cannot update route for #{params[:username]}@#{params[:domain_name]}", e)
       rescue ApiErrors::BaseError => e
           raise e
