@@ -34,4 +34,8 @@ class VPasswd < ApplicationRecord
     self.table_name = 'v_passwd'
     validates_presence_of :username, :password, :acct_type
 
+    def as_json(options = nil)
+        super((options || {}).merge(except: %i[password password_digest]))
+    end
+
 end
