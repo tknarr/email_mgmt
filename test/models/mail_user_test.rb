@@ -23,7 +23,7 @@ class MailUserTest < ActiveSupport::TestCase
 
     test 'retrieve all users' do
         user_list = MailUser.all
-        assert_equal 3, user_list.count, "User list doesn't contain expected initial number of elements."
+        assert_equal 5, user_list.count, "User list doesn't contain expected initial number of elements."
     end
 
 end

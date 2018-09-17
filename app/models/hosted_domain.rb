@@ -25,6 +25,7 @@
 #-----
 
 class HostedDomain < ApplicationRecord
+    self.primary_key = :name
     validates_presence_of :name
 
     # Returns all domains as objects containing the domain name and the default

@@ -34,7 +34,7 @@ class SystemAliasTest < ActiveSupport::TestCase
     test 'do sync normal outcome' do
         alias_users = SystemAlias.do_sync file_fixture('sync_aliases_normal').to_s
         assert_not_empty alias_users, "Alias users list was empty when expected to have entries."
-        assert_equal 12, alias_users.count, "Alias users list did not contain the expected number of items."
+        assert_equal 13, alias_users.count, "Alias users list did not contain the expected number of items."
     end
 
     test 'merge aliases' do

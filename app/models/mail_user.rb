@@ -37,6 +37,7 @@
 #-----
 
 class MailUser < ApplicationRecord
+    self.primary_key = :username
     has_secure_password
     validates_presence_of :username, :password_digest, :acct_type
 
