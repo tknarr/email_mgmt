@@ -52,7 +52,9 @@ class UserController < ApplicationController
 
     def create
         begin
-            # TODO create virtual user home directory
+            if Rails.env.production?
+                VirtualUser.create_home params[:username]
+            end
             # Force locked password digest for alias users
             user = if params[:acct_type] == 'A'
                        MailUser.create!(username: params[:username], password_digest: 'x', acct_type: params[:acct_type])
@@ -90,7 +92,9 @@ class UserController < ApplicationController
                 updated_attributes.delete(:admin)
             end
             user.update!(updated_attributes) unless updated_attributes.empty?
-            # TODO rename virtual user home directory
+            if Rails.env.production? && updated_attributes[:username]
+                VirtualUser.rename_home params[:id], updated_attributes[:username]
+            end
             render status: :ok, json: user
         rescue ActiveRecord::RecordNotFound => e
             raise ApiErrors::NotFound.new("User #{params[:id]} does not exist", e)
@@ -111,7 +115,9 @@ class UserController < ApplicationController
                 raise ApiErrors::CannotDelete.new("Current user could not be deleted")
             end
             user&.destroy!
-            # TODO delete virtual user home directory
+            if Rails.env.production?
+                VirtualUser.remove_home params[:id]
+            end
             head :ok
         rescue ActiveRecord::StaleObjectError => e
             raise ApiErrors::CannotDelete.new("User #{params[:id]} could not be deleted", e)

@@ -20,10 +20,27 @@
 class VirtualUser
 
     def self.create_home(username)
-        # TODO implement
-        # throw AlreadyExists if directory already exists
-        # throw CannotCreate if directory create fails
-        # exec('/usr/bin/sudo -u vmail /usr/local/bin/makevmaildir.sh ' . $username, $op, $retval);
+        `/usr/bin/sudo -u vmail /usr/local/bin/vmaildir.sh create #{username}`
+        exit_code = $?.exitstatus
+        if exit_code != 0
+            raise ApiErrors::AlreadyExists.new("Home directory for user #{username} already exists")
+        end
+    end
+
+    def self.rename_home(old_username, new_username)
+        `/usr/bin/sudo -u vmail /usr/local/bin/vmaildir.sh rename #{old_username} #{new_username}`
+        exit_code = $?.exitstatus
+        if exit_code != 0
+            raise ApiErrors::CannotUpdate.new("Problem renaming home directory for user #{old_username} to #{new_username}")
+        end
+    end
+
+    def self.remove_home(username)
+        `/usr/bin/sudo -u vmail /usr/local/bin/vmaildir.sh delete #{username}`
+        exit_code = $?.exitstatus
+        if exit_code != 0
+            raise ApiErrors::CannotDelete.new("Home directory for user #{username} does not exist")
+        end
     end
 
 end

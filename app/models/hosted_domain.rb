@@ -30,7 +30,6 @@ class HostedDomain < ApplicationRecord
     # Returns all domains as objects containing the domain name and the default
     # recipient (or nil if none).
     def self.all_routing
-        # TODO need less total method
         find_by_sql(
             'SELECT name, mail_routing.recipient AS default_recipient' \
                 ' FROM hosted_domains' \

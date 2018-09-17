@@ -123,4 +123,10 @@ module ApiErrors
         end
     end
 
+    class AliasConflict < BaseError
+        def initialize(msg = nil, child = nil)
+            super(:conflict, msg || "Alias conflicts with non-alias user", child)
+        end
+    end
+
 end
