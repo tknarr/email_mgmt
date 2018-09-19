@@ -1,9 +1,19 @@
-root_global:
+global_for_user:
   address_user: root
   address_domain: '*'
   recipient: root
 
-all_at_sample:
+global_for_domain:
   address_user: '*'
   address_domain: sample.com
   recipient: sample_default
+
+normal_user:
+  address_user: user1
+  address_domain: xyzzy.com
+  recipient: user1
+
+catchall:
+  address_user: '*'
+  address_domain: '*'
+  recipient: postmaster

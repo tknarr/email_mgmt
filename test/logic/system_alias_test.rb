@@ -22,12 +22,50 @@ require 'system_alias'
 
 class SystemAliasTest < ActiveSupport::TestCase
 
+    def setup
+        @expected_merged_aliases = [
+            { "username": "alias1", "account_type": "Alias user", "system_alias": "", "targets": [] },
+            { "username": "postmaster", "account_type": "Alias user", "system_alias": "postmaster", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "mailer-daemon", "targets": ["postmaster"] },
+            { "username": "", "account_type": "System alias", "system_alias": "nobody", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "hostmaster", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "usenet", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "news", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "webmaster", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "www", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "ftp", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "abuse", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "noc", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "security", "targets": ["root"] },
+            { "username": "", "account_type": "System alias", "system_alias": "root", "targets": ["myusername"] },
+        ]
+        @expected_sync_results = [
+            { :username => "abuse", :account_type => "Alias user", :system_alias => "abuse", :targets => ["root"] },
+            { :username => "ftp", :account_type => "Alias user", :system_alias => "ftp", :targets => ["root"] },
+            { :username => "hostmaster", :account_type => "Alias user", :system_alias => "hostmaster", :targets => ["root"] },
+            { :username => "mailer-daemon", :account_type => "Alias user", :system_alias => "mailer-daemon", :targets => ["postmaster"] },
+            { :username => "news", :account_type => "Alias user", :system_alias => "news", :targets => ["root"] },
+            { :username => "nobody", :account_type => "Alias user", :system_alias => "nobody", :targets => ["root"] },
+            { :username => "noc", :account_type => "Alias user", :system_alias => "noc", :targets => ["root"] },
+            { :username => "postmaster", :account_type => "Alias user", :system_alias => "postmaster", :targets => ["root"] },
+            { :username => "security", :account_type => "Alias user", :system_alias => "security", :targets => ["root"] },
+            { :username => "usenet", :account_type => "Alias user", :system_alias => "usenet", :targets => ["root"] },
+            { :username => "webmaster", :account_type => "Alias user", :system_alias => "webmaster", :targets => ["root"] },
+            { :username => "www", :account_type => "Alias user", :system_alias => "www", :targets => ["root"] },
+            { :username => "", :account_type => "System alias", :system_alias => "root", :targets => ["myusername"] }
+        ]
+
+    end
+
     test 'read system aliases success' do
         aliases = SystemAlias.get_aliases file_fixture('system_aliases_test').to_s
         assert_equal 3, aliases.count, 'Aliases hash did not contain expected number of items.'
         assert_equal 1, aliases['testuser1'].count, 'Test user 1 did not contain just one target.'
         assert_equal 'singletarget', aliases['testuser1'][0], 'Test user 1 did not have the correct target.'
         assert_equal 3, aliases['testuser2'].count, 'Test user 2 did not contain the expected number of targets.'
+        assert_equal 'firsttarget', aliases['testuser2'][0], 'Text user 2 first target incorrect.'
+        assert_equal 'secondtarget', aliases['testuser2'][1], 'Text user 2 second target incorrect.'
+        assert_equal 'thirdtarget', aliases['testuser2'][2], 'Text user 2 third target incorrect.'
         assert_equal 1, aliases['finaluser'].count, 'Final test user did not contain just one target.'
     end
 
@@ -35,6 +73,7 @@ class SystemAliasTest < ActiveSupport::TestCase
         alias_users = SystemAlias.do_sync file_fixture('sync_aliases_normal').to_s
         assert_not_empty alias_users, "Alias users list was empty when expected to have entries."
         assert_equal 13, alias_users.count, "Alias users list did not contain the expected number of items."
+        assert_equal @expected_sync_results, alias_users, "Results not as expected."
     end
 
     test 'merge aliases' do
@@ -43,12 +82,14 @@ class SystemAliasTest < ActiveSupport::TestCase
         results = SystemAlias.merge_aliases aliases, alias_users
         assert_not_empty results, "Merged aliases list was empty."
         assert_equal 14, results.count, "Merged alias list did not contain the expected number of items."
+        assert_equal @expected_merged_aliases, results, "Results were not as expected."
     end
 
     test 'get merged aliases' do
         results = SystemAlias.get_merged_aliases file_fixture('system_aliases_normal').to_s
         assert_not_empty results, "Merged aliases list was empty."
         assert_equal 14, results.count, "Merged alias list did not contain the expected number of items."
+        assert_equal @expected_merged_aliases, results, "Results were not as expected."
     end
 
 end

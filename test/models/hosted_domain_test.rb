@@ -23,12 +23,17 @@ class HostedDomainTest < ActiveSupport::TestCase
 
     test 'retrieve all domains' do
         domain_list = HostedDomain.all
-        assert_equal 2, domain_list.count, "Domain list doesn't contain expected initial number of elements."
+        assert_equal hosted_domains.count, domain_list.count, "Domain list doesn't contain expected initial number of elements."
+        i = 0
+        hosted_domains.each { |hosted_domain|
+            assert_equal hosted_domain, domain_list[i], "Domain list entry #{i} does not match #{hosted_domain.name}"
+            i += 1
+        }
     end
 
     test 'retrieve all domains with default recipient' do
         domain_list = HostedDomain.all_routing
-        assert_equal 2, domain_list.count, "Domain list doesn't contain expected initial number of elements."
+        assert_equal hosted_domains.count, domain_list.count, "Domain list doesn't contain expected initial number of elements."
         domain_list.each do |item|
             if item.name == 'sample.com'
                 assert_equal 'sample_default', item.default_recipient, "Default recipient not set when expected."

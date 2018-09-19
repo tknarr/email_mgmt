@@ -22,8 +22,16 @@ require 'test_helper'
 class MailRoutingTest < ActiveSupport::TestCase
 
     test 'retrieve all routing entries' do
+        expected = mail_routing.to_a.sort! do |a, b|
+            RouteOrder.key_compare a, b
+        end
         routing_list = MailRouting.all
-        assert_equal 2, routing_list.count, "Routing list doesn't contain expected initial number of elements."
+        assert_equal expected.count, routing_list.count, "Routing list doesn't contain expected initial number of elements."
+        i = 0
+        routing_list.each do |entry|
+            assert_equal expected[i], entry, "Routing list entry #{i} does not match #{entry.address_user}@#{entry.address_domain}"
+            i += 1
+        end
     end
 
 end

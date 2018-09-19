@@ -28,19 +28,32 @@ require 'test_helper'
 class RelayMapControllerTest < ActionDispatch::IntegrationTest
 
     test 'get domains' do
-        get relay_domains_url, params: {token: 'mytoken'}
+        expected_results = [
+            "sample.com\tOK\n",
+            "test.subdomain.mydomain.com\tOK\n"
+        ]
+        get relay_domains_url, params: { token: 'mytoken' }
         assert_response :success
         assert_equal 'text/plain', @response.content_type, "Response content type was not plain text"
         entries = @response.body.lines
         assert_equal 2, entries.count
+        assert_equal expected_results, entries, "Result were not as expected."
     end
 
     test 'get recipients' do
-        get relay_recipients_url, params: {token: 'mytoken'}
+        expected_results = [
+            "root@sample.com\tOK\n",
+            "root@test.subdomain.mydomain.com\tOK\n",
+            "user1@xyzzy.com\tOK\n",
+            "@sample.com\tOK\n",
+            "@test.subdomain.mydomain.com\tOK\n",
+        ]
+        get relay_recipients_url, params: { token: 'mytoken' }
         assert_response :success
         assert_equal 'text/plain', @response.content_type, "Response content type was not plain text"
         entries = @response.body.lines
-        assert_equal 3, entries.count
+        assert_equal 5, entries.count
+        assert_equal expected_results, entries, "Result were not as expected."
     end
 
 end

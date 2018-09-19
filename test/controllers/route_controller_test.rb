@@ -31,8 +31,8 @@ require 'test_helper'
 class RouteControllerTest < ActionDispatch::IntegrationTest
 
     def setup
-        @admin_headers = {"Authorization" => ActionController::HttpAuthentication::Basic.encode_credentials('root', 'changeme')}
-        @user_headers = {"Authorization" => ActionController::HttpAuthentication::Basic.encode_credentials('user1', 'changeme')}
+        @admin_headers = { "Authorization" => ActionController::HttpAuthentication::Basic.encode_credentials('root', 'changeme') }
+        @user_headers = { "Authorization" => ActionController::HttpAuthentication::Basic.encode_credentials('user1', 'changeme') }
     end
 
     test "mail routing controller routing" do
@@ -56,16 +56,51 @@ class RouteControllerTest < ActionDispatch::IntegrationTest
     end
 
     test 'get index' do
+        expected = [
+            { 'address_user' => '*', 'address_domain' => '*', 'recipient' => 'postmaster' },
+            { 'address_user' => '*', 'address_domain' => 'sample.com', 'recipient' => 'sample_default' },
+            { 'address_user' => 'root', 'address_domain' => '*', 'recipient' => 'root' },
+            { 'address_user' => 'user1', 'address_domain' => 'xyzzy.com', 'recipient' => 'user1' },
+        ]
         get routes_url, headers: @admin_headers
         assert_response :success
         assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
         route_list = JSON.parse(@response.body)
-        assert_not_nil route_list
-        assert_equal 2, route_list.count, "Route list did not contain the expected number of entries."
-        exp = {'address_user' => '*', 'address_domain' => 'sample.com', 'recipient' => 'sample_default'}
-        assert_includes route_list, exp, "Route list did not contain sample_default entry."
-        exp = {'address_user' => 'root', 'address_domain' => '*', 'recipient' => 'root'}
-        assert_includes route_list, exp, "Route list did not contain root entry."
+        assert_not_empty route_list
+        assert_equal 4, route_list.count, "Route list did not contain the expected number of entries."
+        assert_equal expected, route_list, "Route list was not as expected."
+    end
+
+    test 'get ordered index' do
+        expected = [
+            { 'address_user' => 'user1', 'address_domain' => 'xyzzy.com', 'recipient' => 'user1' },
+            { 'address_user' => 'root', 'address_domain' => '*', 'recipient' => 'root' },
+            { 'address_user' => '*', 'address_domain' => 'sample.com', 'recipient' => 'sample_default' },
+            { 'address_user' => '*', 'address_domain' => '*', 'recipient' => 'postmaster' },
+        ]
+        get routes_url, params: { ordered: 'yes' }, headers: @admin_headers
+        assert_response :success
+        assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
+        route_list = JSON.parse(@response.body)
+        assert_not_empty route_list
+        assert_equal 4, route_list.count, "Route list did not contain the expected number of entries."
+        assert_equal expected, route_list, "Route list was not as expected."
+    end
+
+    test 'get ordered index wrong ordered value' do
+        expected = [
+            { 'address_user' => '*', 'address_domain' => '*', 'recipient' => 'postmaster' },
+            { 'address_user' => '*', 'address_domain' => 'sample.com', 'recipient' => 'sample_default' },
+            { 'address_user' => 'root', 'address_domain' => '*', 'recipient' => 'root' },
+            { 'address_user' => 'user1', 'address_domain' => 'xyzzy.com', 'recipient' => 'user1' },
+        ]
+        get routes_url, params: { ordered: 'bogus' }, headers: @admin_headers
+        assert_response :success
+        assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
+        route_list = JSON.parse(@response.body)
+        assert_not_empty route_list
+        assert_equal 4, route_list.count, "Route list did not contain the expected number of entries."
+        assert_equal expected, route_list, "Route list was not as expected."
     end
 
     test 'basic create' do

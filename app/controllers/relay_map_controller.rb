@@ -43,7 +43,7 @@ class RelayMapController < ApplicationController
 
     def recipients
         begin
-            result_text = ''
+            result_lines = []
             # Collect list of domain names for wildcard expansion later
             domain_name_list = []
             begin
@@ -61,23 +61,35 @@ class RelayMapController < ApplicationController
                 domain = route_entry.address_domain
                 if domain == '*'
                     domain_name_list.each do |domain_name|
-                        result_text << username << '@' << domain_name << "\tOK\n"
+                        result_lines << "#{username}@#{domain_name}\tOK"
                     end
                 else
-                    result_text << username << '@' << domain << "\tOK\n"
+                    result_lines << "#{username}@#{domain}\tOK"
                 end
             end
             # Pull wildcard user routing entries and output them, expanding wildcard domains where needed
             route_list = MailRouting.where(address_user: '*').order(:address_user, :address_domain)
             route_list.each do |route_entry|
-                domain = route_entry.address_domain
-                if domain == '*'
-                    domain_name_list.each do |domain_name|
-                        result_text << '@' << domain_name << "\tOK\n"
-                    end
-                else
-                    result_text << '@' << domain << "\tOK\n"
+                domain_name = route_entry.address_domain
+                # Skip the *@* wildcard at the moment
+                unless domain_name == '*'
+                    result_lines << "@#{domain_name}\tOK"
                 end
+            end
+            # Now handle the *@* wildcard if any
+            route_list = MailRouting.where(address_user: '*', address_domain: '*')
+            unless route_list.empty?
+                # Generate wildcard domain lines for every domain we host that doesn't already have one
+                domain_name_list.each do |domain_name|
+                    line = "@#{domain_name}\tOK"
+                    unless result_lines.include? line
+                        result_lines << line
+                    end
+                end
+            end
+            result_text = ''
+            result_lines.each do |line|
+                result_text << "#{line}\n"
             end
             render status: :ok, plain: result_text
         rescue => e

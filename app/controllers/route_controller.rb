@@ -31,6 +31,9 @@ class RouteController < ApplicationController
   def index
       begin
           routing_list = MailRouting.all
+          if params[:ordered] && params[:ordered] == 'yes'
+              routing_list = RouteOrder.entry_sort routing_list
+          end
           render status: :ok, json: routing_list
       rescue => e
           raise ApiErrors::ServerError.new(nil, e)

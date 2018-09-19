@@ -22,7 +22,6 @@ require 'virtual_user'
 
 class VirtualUserTest < ActiveSupport::TestCase
 
-    # No sensible tests exist because appropriate sudo setup is not reliably available
-    # on development systems.
+    # TODO tests assuming correct sudo setup
 
 end

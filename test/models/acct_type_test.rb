@@ -21,9 +21,16 @@ require 'test_helper'
 
 class AcctTypeTest < ActiveSupport::TestCase
 
+    def setup
+        @acct_type_xlate = { 'A' => :alias, 'R' => :root, 'V' => :virtual, 'S' => :system }
+    end
+
     test 'retrieve seeded account types' do
         acct_type_list = AcctType.all
-        assert_equal 4, acct_type_list.count, "Account type list doesn't contain expected initial number of elements."
+        assert_equal acct_types.count, acct_type_list.count, "Account type list doesn't contain expected initial number of elements."
+        acct_type_list.each do |acct_type|
+            assert_equal acct_types(@acct_type_xlate[acct_type.code]), acct_type, "Record for account type #{acct_type.code} does not match."
+        end
     end
 
 end

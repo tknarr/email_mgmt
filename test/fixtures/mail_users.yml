@@ -9,7 +9,7 @@ user1:
   password_digest: <%= BCrypt::Password.create('changeme', cost: 5) %>
   acct_type: V
 
-sample_default_user:
+sample_default:
   username: sample_default
   password_digest: <%= BCrypt::Password.create('changeme', cost: 5) %>
   acct_type: S

@@ -23,7 +23,10 @@ class MailUserTest < ActiveSupport::TestCase
 
     test 'retrieve all users' do
         user_list = MailUser.all
-        assert_equal 5, user_list.count, "User list doesn't contain expected initial number of elements."
+        assert_equal mail_users.count, user_list.count, "User list doesn't contain expected initial number of elements."
+        user_list.each do |user|
+            assert_equal mail_users(user.username.to_sym), user, "User #{user.username} does not match."
+        end
     end
 
 end

@@ -1,5 +1,5 @@
 testuser1: singletarget
-testuser2: firsttarget,secondtarget,thirdtarget
+testuser2: firsttarget, secondtarget  ,thirdtarget
 testuser3:
 # Comment line
 
