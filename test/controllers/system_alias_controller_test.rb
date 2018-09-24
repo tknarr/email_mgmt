@@ -80,13 +80,14 @@ class SystemAliasControllerTest < ActionDispatch::IntegrationTest
         assert_response :forbidden
     end
 
-    test 'do sync' do
-        get system_aliases_sync_url, headers: @admin_headers
-        assert_response :success
-        assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
-        user_list = JSON.parse(@response.body)
-        assert_not_nil user_list
-        assert user_list.count > 0, "Alias user list did not contain any entries."
-    end
+    # NOTE alias users not supported
+    # test 'do sync' do
+    #     get system_aliases_sync_url, headers: @admin_headers
+    #     assert_response :success
+    #     assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
+    #     user_list = JSON.parse(@response.body)
+    #     assert_not_nil user_list
+    #     assert user_list.count > 0, "Alias user list did not contain any entries."
+    # end
 
 end

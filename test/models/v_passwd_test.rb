@@ -23,7 +23,7 @@ class VPasswdTest < ActiveSupport::TestCase
 
     test 'retrieve all entries' do
         user_list = VPasswd.all
-        assert_equal 5, user_list.count, "Passwd list doesn't contain expected initial number of elements."
+        assert_equal 3, user_list.count, "Passwd list doesn't contain expected initial number of elements."
     end
 
 end

@@ -46,8 +46,10 @@ class SystemAliasController < ApplicationController
 
     def sync
         begin
-            alias_users = SystemAlias.do_sync
-            render status: :ok, json: alias_users
+            # NOTE alias users currently not supported
+            # alias_users = SystemAlias.do_sync
+            # render status: :ok, json: alias_users
+            raise ApiErrors::NotImplemented.new("Sync Aliases not implemented")
         rescue ApiErrors::BaseError => e
             raise e
         rescue => e

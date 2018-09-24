@@ -1,19 +1,21 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
 
+# Alias accounts not currently used/supported properly.
+
 AcctType.create!(code: 'R', description: 'Root', abbreviation: 'Root', home_root: '/')
 AcctType.create!(code: 'S', description: 'System user', abbreviation: 'Sys', home_root: '/home/')
-AcctType.create!(code: 'A', description: 'Alias', abbreviation: 'Alias', home_root: '/alias/')
+# AcctType.create!(code: 'A', description: 'Alias', abbreviation: 'Alias', home_root: '')
 AcctType.create!(code: 'V', description: 'Virtual user', abbreviation: '', home_root: '/home/vmail/',
                  uid: 'vmail', gid: 'vmail', transport: 'lmtp:unix:private/dovecot-lmtp')
 
 MailUser.create!(username: 'root', password: 'changeme', acct_type: 'R', admin: 1)
-MailUser.create(username: 'postmaster', password_digest: 'x', acct_type: 'A')
-MailUser.create(username: 'hostmaster', password_digest: 'x', acct_type: 'A')
-MailUser.create(username: 'webmaster', password_digest: 'x', acct_type: 'A')
-MailUser.create(username: 'abuse', password_digest: 'x', acct_type: 'A')
-MailUser.create(username: 'noc', password_digest: 'x', acct_type: 'A')
-MailUser.create(username: 'security', password_digest: 'x', acct_type: 'A')
+# MailUser.create(username: 'postmaster', password_digest: 'x', acct_type: 'A')
+# MailUser.create(username: 'hostmaster', password_digest: 'x', acct_type: 'A')
+# MailUser.create(username: 'webmaster', password_digest: 'x', acct_type: 'A')
+# MailUser.create(username: 'abuse', password_digest: 'x', acct_type: 'A')
+# MailUser.create(username: 'noc', password_digest: 'x', acct_type: 'A')
+# MailUser.create(username: 'security', password_digest: 'x', acct_type: 'A')
 
 MailRouting.create!(address_user: 'root', address_domain: '*', recipient: 'root')
 MailRouting.create!(address_user: 'admin', address_domain: '*', recipient: 'root')

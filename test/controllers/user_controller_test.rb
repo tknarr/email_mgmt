@@ -67,7 +67,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
         assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
         user_list = JSON.parse(@response.body)
         assert_not_nil user_list
-        assert_equal 5, user_list.count, "User list did not contain the expected number of entries."
+        assert_equal 3, user_list.count, "User list did not contain the expected number of entries."
     end
 
     test 'get passwd view' do
@@ -76,7 +76,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
         assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
         user_list = JSON.parse(@response.body)
         assert_not_nil user_list
-        assert_equal 5, user_list.count, "User list did not contain the expected number of entries."
+        assert_equal 3, user_list.count, "User list did not contain the expected number of entries."
     end
 
     test 'basic create' do

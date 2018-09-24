@@ -9,7 +9,7 @@ CREATE TABLE acct_types (
     code         CHAR(1)     NOT NULL PRIMARY KEY,
     description  VARCHAR(50),
     abbreviation VARCHAR(10),
-    home_root    VARCHAR(50) NOT NULL,
+    home_root    VARCHAR(50),
     uid          VARCHAR(20),
     gid          VARCHAR(20),
     transport    VARCHAR(100)
@@ -36,13 +36,14 @@ CREATE TABLE mail_routing (
 );
 
 CREATE SQL SECURITY INVOKER VIEW v_passwd AS
-    SELECT u.username                        AS username,
-           u.password_digest                 AS password,
-           u.acct_type                       AS acct_type,
-           IFNULL( a.uid, u.username )       AS uid,
-           IFNULL( a.gid, u.username )       AS gid,
-           CONCAT( a.home_root, u.username ) AS home,
-           a.transport                       AS transport
+    SELECT u.username                       AS username,
+           u.password_digest                AS password,
+           u.acct_type                      AS acct_type,
+           IFNULL( a.uid, u.username )      AS uid,
+           IFNULL( a.gid, u.username )      AS gid,
+           IF( a.home_root IS NOT NULL, CONCAT( a.home_root, u.username ), '' )
+                                            AS home,
+           a.transport                      AS transport
     FROM mail_users AS u, acct_types AS a
     WHERE u.acct_type = a.code;
 

@@ -43,7 +43,7 @@ class AccountTypeControllerTest < ActionDispatch::IntegrationTest
         assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
         account_type_list = JSON.parse(@response.body)
         assert_not_nil account_type_list
-        assert_equal 4, account_type_list.count, "Account type list did not contain the expected number of entries."
+        assert_equal 3, account_type_list.count, "Account type list did not contain the expected number of entries."
     end
 
     test 'get index not admin' do
@@ -52,7 +52,7 @@ class AccountTypeControllerTest < ActionDispatch::IntegrationTest
         assert_equal 'application/json', @response.content_type, "Response content type was not JSON"
         account_type_list = JSON.parse(@response.body)
         assert_not_nil account_type_list
-        assert_equal 4, account_type_list.count, "Account type list did not contain the expected number of entries."
+        assert_equal 3, account_type_list.count, "Account type list did not contain the expected number of entries."
     end
 
 end

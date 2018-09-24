@@ -13,13 +13,3 @@ sample_default:
   username: sample_default
   password_digest: <%= BCrypt::Password.create('changeme', cost: 5) %>
   acct_type: S
-
-postmaster:
-  username: postmaster
-  password_digest: x
-  acct_type: A
-
-alias1:
-  username: alias1
-  password_digest: x
-  acct_type: A

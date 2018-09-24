@@ -63,6 +63,12 @@ module ApiErrors
         end
     end
 
+    class NotImplemented < BaseError
+        def initialize(msg = nil, child = nil)
+            super(:not_implemented, msg || "Method not implemented", child)
+        end
+    end
+
     class BadRequest < BaseError
         def initialize(msg = nil, child = nil)
             super(:bad_request, msg || "Bad request", child)

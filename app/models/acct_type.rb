@@ -5,7 +5,7 @@
 #  code         :string(1)        not null, primary key
 #  description  :string(50)
 #  abbreviation :string(10)
-#  home_root    :string(50)       not null
+#  home_root    :string(50)
 #  uid          :string(20)
 #  gid          :string(20)
 #  transport    :string(100)
@@ -32,6 +32,6 @@
 
 class AcctType < ApplicationRecord
     self.primary_key = :code
-    validates_presence_of :code, :description, :home_root
+    validates_presence_of :code, :description
 
 end
