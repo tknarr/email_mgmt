@@ -8,3 +8,5 @@ task :check_write_permissions do
         end
     end
 end
+
+before "deploy:starting", "check_write_permissions"

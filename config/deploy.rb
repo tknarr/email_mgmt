@@ -21,7 +21,7 @@ set :deploy_to, "/home/email_mgmt/app"
 # set :pty, true
 
 # Default value for :linked_files is []
-append :linked_files, "config/master.key", "config/credentials.yml.enc", "config/database.yml", "config/settings/production.local.yml"
+append :linked_files, "config/master.key", "config/credentials.yml.enc", "config/database.yml"
 
 # Default value for linked_dirs is []
 append :linked_dirs, ".bundle", "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system", "config/settings"

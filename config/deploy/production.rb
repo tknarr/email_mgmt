@@ -1,7 +1,7 @@
 # Server roles
 # ============
 
-server 'dev1.silverglass-tech.com', roles: %{web app db}
+server 'dev1.silverglass-tech.com', roles: %{web app db}, database_admin: true
 
 
 # Configuration
@@ -16,4 +16,5 @@ server 'dev1.silverglass-tech.com', roles: %{web app db}
 set :ssh_options,
     keys: %w[/home/tknarr/.ssh/id_awsdev],
     auth_methods: %w[publickey],
-    forward_agent: true
+    forward_agent: true,
+    send_env: ['EMAIL_MGMT_DATABASE_ADMIN']
