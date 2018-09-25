@@ -42,3 +42,8 @@ set :keep_releases, 3
 set :conditionally_migrate, true
 set :migration_role, :app
 set :keep_assets, 3
+
+# RVM configuration
+set :rvm_type, :user
+set :rvm_ruby_version, '2.5.1@email_mgmt'
+set :rvm_custom_path, '/home/email_mgmt/.rvm'
