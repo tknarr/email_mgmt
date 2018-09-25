@@ -18,11 +18,6 @@
 # We use structure.sql, so don't include schema.rb
 /db/schema.rb
 
-# Config gem local files
-config/settings.local.yml
-config/settings/*.local.yml
-config/environments/*.local.yml
-
 
 ### Ruby ###
 *.gem
@@ -43,6 +38,7 @@ config/environments/*.local.yml
 # Config library local files
 /config/*.local.yml
 /config/settings/*.local.yml
+config/environments/*.local.yml
 
 ## Documentation cache and generated files:
 /.yardoc/
@@ -58,14 +54,16 @@ config/environments/*.local.yml
 # for a library or gem, you might want to ignore these files since the code is
 # intended to run in multiple environments; otherwise, check them in:
 # Gemfile.lock
-.ruby-version
-.ruby-gemset
+# .ruby-version
+# .ruby-gemset
 
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
 
-# Database configuration contains sensitive information
+# Configuration contains sensitive information
 /config/database.yml
+/config/master.key
+/config/credentials.yml.enc
 
 ### RubyMine ###
 
