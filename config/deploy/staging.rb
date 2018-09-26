@@ -17,4 +17,3 @@ set :ssh_options,
     keys: %w[/home/tknarr/.ssh/id_awsdev],
     auth_methods: %w[publickey],
     forward_agent: true,
-    send_env: ['EMAIL_MGMT_DATABASE_ADMIN']

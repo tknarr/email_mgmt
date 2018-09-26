@@ -73,6 +73,10 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
+    capistrano3-puma (3.1.1)
+      capistrano (~> 3.7)
+      capistrano-bundler
+      puma (~> 3.4)
     case_transform (0.2)
       activesupport
     composite_primary_keys (11.0.3)
@@ -222,6 +226,7 @@ DEPENDENCIES
   byebug
   capistrano-rails
   capistrano-rvm
+  capistrano3-puma
   composite_primary_keys (~> 11.0)
   config (~> 1.7)
   listen (>= 3.0.5, < 3.2)
