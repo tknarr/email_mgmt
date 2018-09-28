@@ -22,15 +22,15 @@
 CREATE DATABASE email;
 
 CREATE USER email_mgmt@localhost IDENTIFIED BY 'changeme';
-REVOKE ALL PRIVILEGES, GRANT OPTION ON *.* FROM email_mgmt@localhost;
+REVOKE ALL PRIVILEGES ON *.* FROM email_mgmt@localhost;
 GRANT DELETE, EXECUTE, INSERT, SELECT, UPDATE, USAGE
     ON email.*
     TO email_mgmt@localhost;
 
-CREATE USER email_mgmt_admin@localhost IDENTIFIED BY 'changeme';
-REVOKE ALL PRIVILEGES, GRANT OPTION ON *.* FROM email_mgmt_admin@localhost;
+CREATE USER email_admin@localhost IDENTIFIED BY 'changeme';
+REVOKE ALL PRIVILEGES ON *.* FROM email_admin@localhost;
 GRANT ALTER, ALTER ROUTINE, CREATE, CREATE ROUTINE, CREATE VIEW, DELETE,
-      DROP, EXECUTE, INDEX, INSERT, LOCK TABLES, REFERENCES, RELOAD, SELECT,
+      DROP, EXECUTE, INDEX, INSERT, LOCK TABLES, REFERENCES, SELECT,
       SHOW VIEW, UPDATE, USAGE
     ON email.*
-    TO email_mgmt_admin@localhost;
+    TO email_admin@localhost;
