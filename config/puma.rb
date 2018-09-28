@@ -1,3 +1,13 @@
+env = ENV.fetch("RAILS_ENV") { "development" }
+
+base_path = ENV.fetch("HOME") + "/app"
+app_path = base_path + "/current"
+shared_path = base_path + "/shared"
+
+if env == "production"
+    directory app_path
+end
+
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
 # Any libraries that use thread pools should be configured to match
@@ -13,7 +23,7 @@ port ENV.fetch("PORT") { 3000 }
 
 # Specifies the `environment` that Puma will run in.
 #
-environment ENV.fetch("RAILS_ENV") { "development" }
+environment env
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
@@ -29,6 +39,14 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 # process behavior so workers use less memory.
 #
 # preload_app!
+
+# Additional configuration for production
+if env == "production"
+    pidfile shared_path + '/tmp/pids/puma.pid'
+    state_path shared_path + '/tmp/pids/puma.state'
+    quiet
+    activate_control_app 'unix://' + shared_path + '/tmp/sockets/puma.sock'
+end
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart

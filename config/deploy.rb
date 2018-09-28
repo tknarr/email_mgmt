@@ -39,7 +39,6 @@ set :keep_releases, 3
 # set :ssh_options, verify_host_key: :secure
 
 # Rails configuration items
-set :conditionally_migrate, true
 set :migration_role, :app
 set :keep_assets, 3
 
@@ -47,4 +46,7 @@ set :keep_assets, 3
 set :rvm_ruby_version, '2.5.1@email_mgmt'
 set :rvm_custom_path, '/usr/share/rvm'
 
-set :puma_init_active_record, true
+# Puma control configuration
+set :puma_control_app, true
+set :puma_user, 'email_mgmt'
+set :puma_bind, %w[tcp://0.0.0.0:3000 tcp://::0:3000]

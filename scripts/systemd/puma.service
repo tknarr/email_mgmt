@@ -1,0 +1,33 @@
+[Unit]
+Description=Puma HTTP Forking Server
+After=network.target
+
+[Service]
+# Background process configuration (use with --daemon in ExecStart)
+Type=forking
+
+# Preferably configure a non-privileged user
+User=email_mgmt
+
+# The path to the puma application root
+WorkingDirectory=/home/email_mgmt/app/current
+
+# The command to start Puma
+ExecStart=bundle exec puma -C /home/email_mgmt/app/shared/puma.rb --daemon
+
+# The command to stop Puma
+ExecStop=bundle exec pumactl -S /home/email_mgmt/app/shared/tmp/pids/puma.state stop
+
+# Path to PID file so that systemd knows which is the master process
+PIDFile=/home/email_mgmt/app/shared/tmp/pids/puma.pid
+
+# Should systemd restart puma?
+# Use "no" (the default) to ensure no interference when using
+# stop/start/restart via `pumactl`.  The "on-failure" setting might
+# work better for this purpose, but you must test it.
+# Use "always" if only `systemctl` is used for start/stop/restart, and
+# reconsider if you actually need the forking config.
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
