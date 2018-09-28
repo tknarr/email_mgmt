@@ -47,6 +47,7 @@ set :rvm_ruby_version, '2.5.1@email_mgmt'
 set :rvm_custom_path, '/usr/share/rvm'
 
 # Puma control configuration
+set :puma_daemonize, true
 set :puma_control_app, true
 set :puma_user, 'email_mgmt'
-set :puma_bind, %w[tcp://0.0.0.0:3000 tcp://::0:3000]
+set :puma_bind, %w(tcp://127.0.0.1:3000 tcp://[::1]:3000)
