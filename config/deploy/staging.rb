@@ -1,7 +1,7 @@
 # Server roles
 # ============
 
-server 'email_mgmt_deploy@dev1.silverglass-tech.com', roles: %i[app db], database_admin: true
+server 'email_admin@dev1.silverglass-tech.com', roles: %i[app db], database_admin: true
 
 
 # Configuration
