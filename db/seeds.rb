@@ -6,7 +6,7 @@
 AcctType.create!(code: 'R', description: 'Root', abbreviation: 'Root', home_root: '/')
 AcctType.create!(code: 'S', description: 'System user', abbreviation: 'Sys', home_root: '/home/')
 # AcctType.create!(code: 'A', description: 'Alias', abbreviation: 'Alias', home_root: '')
-AcctType.create!(code: 'V', description: 'Virtual user', abbreviation: '', home_root: '/home/vmail/',
+AcctType.create!(code: 'V', description: 'Virtual user', abbreviation: '', home_root: '/home/vmail/u/',
                  uid: 'vmail', gid: 'vmail', transport: 'lmtp:unix:private/dovecot-lmtp')
 
 MailUser.create!(username: 'root', password: 'changeme', acct_type: 'R', admin: 1)
