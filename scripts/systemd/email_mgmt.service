@@ -1,6 +1,8 @@
 [Unit]
-Description=Puma HTTP Forking Server
+Description=Email Management service
+Wants=network-online.target
 After=network.target
+After=network-online.target
 
 [Service]
 # Background process configuration (use with --daemon in ExecStart)
@@ -13,10 +15,10 @@ User=email_mgmt
 WorkingDirectory=/home/email_mgmt/app/current
 
 # The command to start Puma
-ExecStart=bundle exec puma -C /home/email_mgmt/app/shared/puma.rb --daemon
+ExecStart=/home/email_mgmt/bin/email_mgmt.sh start
 
 # The command to stop Puma
-ExecStop=bundle exec pumactl -S /home/email_mgmt/app/shared/tmp/pids/puma.state stop
+ExecStop=/home/email_mgmt/bin/email_mgmt.sh stop
 
 # Path to PID file so that systemd knows which is the master process
 PIDFile=/home/email_mgmt/app/shared/tmp/pids/puma.pid

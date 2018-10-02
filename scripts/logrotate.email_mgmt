@@ -1,0 +1,13 @@
+/home/email_mgmt/app/shared/log/puma_*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0664 email_mgmt email_mgmt
+    sharedscripts
+    postrotate
+        systemctl restart email_mgmt
+    endscript
+}
