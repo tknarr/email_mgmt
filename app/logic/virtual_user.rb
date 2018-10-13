@@ -38,7 +38,9 @@ class VirtualUser
         end
 
         begin
+            umask = File.umask 0o007
             Dir.mkdir homedir, 0o770
+            File.umask umask
         rescue StandardError => e
             raise ApiErrors::ServerError.new("Error creating directory for #{username}: " + e.to_s)
         end
