@@ -21,10 +21,9 @@ class VirtualUser
 
     def self.maildir(username)
         begin
-            entry = VPasswd.find username
-            raise ApiError::ServerError.new("No home directory for #{username}") if entry.home.blank?
-            raise ApiError::ServerError.new("User #{username} is not a virtual user") if entry.acct_type != 'V'
-            return entry.home
+            entry = AcctType.find 'V'
+            raise ApiError::ServerError.new("No home directory for #{username}") if entry.home_root.blank?
+            return entry.home_root + username
         rescue ActiveRecord::RecordNotFound
             raise ApiErrors::ServerError.new("No home directory entry for #{username}")
         end

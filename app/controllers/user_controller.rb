@@ -52,7 +52,7 @@ class UserController < ApplicationController
 
     def create
         begin
-            if Settings.handle_virtual_user_homedirs
+            if Settings.handle_virtual_user_homedirs && params[:acct_type] == 'V'
                 # TODO allow existing directory if selected
                 VirtualUser.create_home params[:username]
             end
@@ -93,7 +93,7 @@ class UserController < ApplicationController
                 updated_attributes.delete(:admin)
             end
             user.update!(updated_attributes) unless updated_attributes.empty?
-            if Settings.handle_virtual_user_homedirs && updated_attributes[:username]
+            if Settings.handle_virtual_user_homedirs && user.acct_type == 'V' && updated_attributes[:username]
                 VirtualUser.rename_home params[:id], updated_attributes[:username]
             end
             render status: :ok, json: user
@@ -116,7 +116,7 @@ class UserController < ApplicationController
                 raise ApiErrors::CannotDelete.new("Current user could not be deleted")
             end
             user&.destroy!
-            if Settings.handle_virtual_user_homedirs
+            if Settings.handle_virtual_user_homedirs && user.acct_type == 'V'
                 VirtualUser.remove_home params[:id]
             end
             head :ok
