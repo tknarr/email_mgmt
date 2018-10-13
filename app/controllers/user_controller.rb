@@ -52,7 +52,8 @@ class UserController < ApplicationController
 
     def create
         begin
-            if Rails.env.production?
+            if Settings.handle_virtual_user_homedirs
+                # TODO allow existing directory if selected
                 VirtualUser.create_home params[:username]
             end
             # Force locked password digest for alias users
@@ -92,7 +93,7 @@ class UserController < ApplicationController
                 updated_attributes.delete(:admin)
             end
             user.update!(updated_attributes) unless updated_attributes.empty?
-            if Rails.env.production? && updated_attributes[:username]
+            if Settings.handle_virtual_user_homedirs && updated_attributes[:username]
                 VirtualUser.rename_home params[:id], updated_attributes[:username]
             end
             render status: :ok, json: user
@@ -115,7 +116,7 @@ class UserController < ApplicationController
                 raise ApiErrors::CannotDelete.new("Current user could not be deleted")
             end
             user&.destroy!
-            if Rails.env.production?
+            if Settings.handle_virtual_user_homedirs
                 VirtualUser.remove_home params[:id]
             end
             head :ok

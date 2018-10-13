@@ -22,6 +22,6 @@ require 'virtual_user'
 
 class VirtualUserTest < ActiveSupport::TestCase
 
-    # TODO tests assuming correct sudo setup
+    # TODO tests
 
 end
