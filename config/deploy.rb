@@ -5,7 +5,6 @@ set :application, "email_mgmt"
 set :repo_url, "git@github.com:tknarr/email_mgmt.git"
 
 # Default branch is :master
-# TODO ask if in development, develop if other than production, master if production
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
