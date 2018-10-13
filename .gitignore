@@ -60,6 +60,9 @@ config/environments/*.local.yml
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
 
+# Don't save the master key in the repo
+/config/master.key
+
 ### RubyMine ###
 
 .idea/
