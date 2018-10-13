@@ -62,6 +62,7 @@ config/environments/*.local.yml
 
 # Don't save the master key in the repo
 /config/master.key
+/config/credentials.yml.enc
 
 ### RubyMine ###
 

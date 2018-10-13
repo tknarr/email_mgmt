@@ -1,2 +1,4 @@
-backup_mx_token: base64token
 handle_virtual_user_homedirs: true
+
+# Specify this in settings.local.yml with an appropriate value (usually a long base64-encoded random string)
+# backup_mx_token: base64token
