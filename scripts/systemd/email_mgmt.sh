@@ -4,6 +4,8 @@
 [ -e /etc/bash.basnrc ] && . /etc/bash.bashrc
 [ -e ${HOME}/.profile ] && . ${HOME}/.profile
 
+PCTL="bin/bundle exec pumactl -S ${HOME}/app/shared/tmp/pids/puma.state"
+
 cd ${HOME}/app/current
 case $1 in
     start)
@@ -11,6 +13,10 @@ case $1 in
         ;;
 
     stop)
-        bin/bundle exec pumactl -S ${HOME}/app/shared/tmp/pids/puma.state stop
+        $PCTL stop
+        ;;
+
+    restart)
+        $PCTL restart
         ;;
 esac

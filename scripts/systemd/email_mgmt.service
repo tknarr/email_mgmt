@@ -14,10 +14,8 @@ User=email_mgmt
 # The path to the puma application root
 WorkingDirectory=/home/email_mgmt/app/current
 
-# The command to start Puma
 ExecStart=/home/email_mgmt/bin/email_mgmt.sh start
-
-# The command to stop Puma
+ExecReload=/home/email_mgmt/bin/email_mgmt.sh restart
 ExecStop=/home/email_mgmt/bin/email_mgmt.sh stop
 
 # Path to PID file so that systemd knows which is the master process
