@@ -16,8 +16,8 @@ gem 'puma', '~> 3.11'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
-gem 'composite_primary_keys', '~> 11.0'
 gem 'active_model_serializers', '~> 0.10.7'
+gem 'composite_primary_keys', '~> 11.0'
 gem 'config', '~> 1.7'
 
 # Use ActiveStorage variant
@@ -41,9 +41,10 @@ group :development do
     # gem 'spring'
     # gem 'spring-watcher-listen', '~> 2.0.0'
 
+    gem 'annotate', '~> 2.7'
+    gem 'bundler-audit', '~> 0.6.1'
     gem 'rubocop', require: false
     gem 'yard', '~> 0.9'
-    gem 'annotate', '~> 2.7'
 
     # Use Capistrano for deployment
     gem 'capistrano-rails'
