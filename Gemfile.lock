@@ -224,11 +224,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_model_serializers (~> 0.10.7)
+  active_model_serializers (~> 0.10)
   annotate (~> 2.7)
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.1.0)
-  bundler-audit (~> 0.6.1)
+  bundler-audit (~> 0.6)
   byebug
   capistrano-rails
   capistrano-rvm
@@ -239,7 +239,7 @@ DEPENDENCIES
   mysql2 (>= 0.4.4, < 0.6.0)
   puma (~> 3.11)
   rack-cors
-  rails (~> 5.2.1)
+  rails (~> 5.2)
   rubocop
   tzinfo-data
   yard (~> 0.9)

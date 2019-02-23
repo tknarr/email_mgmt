@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.1'
+gem 'rails', '~> 5.2'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 # Use Puma as the app server
@@ -16,7 +16,7 @@ gem 'puma', '~> 3.11'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
-gem 'active_model_serializers', '~> 0.10.7'
+gem 'active_model_serializers', '~> 0.10'
 gem 'composite_primary_keys', '~> 11.0'
 gem 'config', '~> 1.7'
 
@@ -42,7 +42,7 @@ group :development do
     # gem 'spring-watcher-listen', '~> 2.0.0'
 
     gem 'annotate', '~> 2.7'
-    gem 'bundler-audit', '~> 0.6.1'
+    gem 'bundler-audit', '~> 0.6'
     gem 'rubocop', require: false
     gem 'yard', '~> 0.9'
 
